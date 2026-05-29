@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://bj3tvpi2urau8"]
+
+[ext_resource type="Script" uid="uid://cie2l8wc6l6i0" path="res://Spawnables/npc.gd" id="1_rvh3u"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_owxeg"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dl6f1"]
+
+[node name="Npc" type="CharacterBody3D" unique_id=728364066]
+script = ExtResource("1_rvh3u")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=986232464]
+mesh = SubResource("CapsuleMesh_owxeg")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=900900571]
+shape = SubResource("CapsuleShape3D_dl6f1")
+
+[node name="walkTimer" type="Timer" parent="." unique_id=2115360942]
