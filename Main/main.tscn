@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://bk2rxxg745mu7"]
+
+[ext_resource type="Script" uid="uid://cxdddhv43u3w8" path="res://Main/main.gd" id="1_qvhan"]
+[ext_resource type="Script" uid="uid://dwlgxpngpwij8" path="res://Main/player.gd" id="2_eunhr"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4flbx"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_4flbx"]
+size = Vector3(20, 1, 20)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_onrkg"]
+size = Vector3(20, 1, 20)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4flbx"]
+
+[sub_resource type="Sky" id="Sky_onrkg"]
+sky_material = SubResource("ProceduralSkyMaterial_4flbx")
+
+[sub_resource type="Environment" id="Environment_4flbx"]
+background_mode = 2
+sky = SubResource("Sky_onrkg")
+
+[node name="Main" type="Node3D" unique_id=1322912856]
+script = ExtResource("1_qvhan")
+
+[node name="Player" type="CharacterBody3D" parent="." unique_id=4466265]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("2_eunhr")
+
+[node name="Camera3D" type="Camera3D" parent="Player" unique_id=29262232]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1132795497]
+shape = SubResource("CapsuleShape3D_4flbx")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1040547865]
+transform = Transform3D(0.22899647, 0, 0.97342724, 0, 1, 0, -0.97342724, 0, 0.22899647, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D" unique_id=1386823550]
+mesh = SubResource("BoxMesh_4flbx")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=2125941536]
+shape = SubResource("BoxShape3D_onrkg")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1159651446]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1357525666]
+environment = SubResource("Environment_4flbx")

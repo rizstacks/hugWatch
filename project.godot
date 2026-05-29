@@ -11,8 +11,9 @@ config_version=5
 [application]
 
 config/name="hugWatch"
+run/main_scene="uid://lobc13prrsvj"
 config/features=PackedStringArray("4.6", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="res://Main/icon.svg"
 
 [physics]
 
