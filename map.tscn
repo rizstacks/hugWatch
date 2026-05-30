@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://ciricousd1hsa"]
+
+[ext_resource type="Script" uid="uid://bpsccpcgsbvl5" path="res://map.gd" id="1_c7s6e"]
+
+[node name="Map" type="Node3D" unique_id=899873080]
+script = ExtResource("1_c7s6e")
