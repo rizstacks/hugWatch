@@ -1,20 +1,10 @@
 @tool
 extends Node3D
 
-<<<<<<< Updated upstream
-@export var clear_old_scene_siblings: bool = false
-
-const KEY_INTERACT := KEY_E
-const INTERACT_DISTANCE := 4.0
-const HOLD_DISTANCE := 2.15
-const THROW_FORCE := 17.0
-const EPS := 0.04
-=======
 const WALL_H: float = 4.6
 const WALL_T: float = 0.28
 const CEIL_T: float = 0.22
 const FLOOR_T: float = 0.18
->>>>>>> Stashed changes
 
 const HALL_X0: float = -54.0
 const HALL_X1: float = 54.0
@@ -95,7 +85,7 @@ func _mat(id: String, color: Color, alpha: float = 1.0) -> StandardMaterial3D:
 	return material
 
 
-func _box(name: String, pos: Vector3, size: Vector3, material: Material, collision: bool = true, parent: Node = self) -> Node3D:
+func _box(name: String, pos: Vector3, size: Vector3, material: Material, collision: bool = true, parent: Node = null) -> Node3D:
 	var node: Node3D
 	if collision:
 		node = StaticBody3D.new()
@@ -104,7 +94,11 @@ func _box(name: String, pos: Vector3, size: Vector3, material: Material, collisi
 
 	node.name = name
 	node.position = pos
-	parent.add_child(node)
+
+	var target_parent: Node = self
+	if parent != null:
+		target_parent = parent
+	target_parent.add_child(node)
 
 	var mesh: BoxMesh = BoxMesh.new()
 	mesh.size = size
@@ -125,7 +119,7 @@ func _box(name: String, pos: Vector3, size: Vector3, material: Material, collisi
 	return node
 
 
-func _cylinder(name: String, pos: Vector3, radius: float, height: float, material: Material, collision: bool = true, parent: Node = self) -> Node3D:
+func _cylinder(name: String, pos: Vector3, radius: float, height: float, material: Material, collision: bool = true, parent: Node = null) -> Node3D:
 	var node: Node3D
 	if collision:
 		node = StaticBody3D.new()
@@ -134,7 +128,11 @@ func _cylinder(name: String, pos: Vector3, radius: float, height: float, materia
 
 	node.name = name
 	node.position = pos
-	parent.add_child(node)
+
+	var target_parent: Node = self
+	if parent != null:
+		target_parent = parent
+	target_parent.add_child(node)
 
 	var mesh: CylinderMesh = CylinderMesh.new()
 	mesh.top_radius = radius
@@ -300,244 +298,8 @@ func _wall_z(name: String, x: float, z0: float, z1: float, openings: Array = [])
 		_wall_z_piece(name + "_solid", x, cursor, z1, 0.0, WALL_H)
 
 
-<<<<<<< Updated upstream
-	create_static_box("Window Left Reveal", Vector3(0.16, height + 0.06, WALL_T + 0.20), Vector3(center - width * 0.5, y, z), WALL_INNER)
-	create_static_box("Window Right Reveal", Vector3(0.16, height + 0.06, WALL_T + 0.20), Vector3(center + width * 0.5, y, z), WALL_INNER)
-	create_static_box("Window Top Reveal", Vector3(width + 0.08, 0.16, WALL_T + 0.20), Vector3(center, bottom + height, z), WALL_INNER)
-	create_static_box("Window Bottom Reveal", Vector3(width + 0.08, 0.16, WALL_T + 0.20), Vector3(center, bottom, z), WALL_INNER)
-
-	create_static_box("Window Frame Top", Vector3(width, 0.08, 0.09), Vector3(center, bottom + height + 0.01, frame_z), TRIM, false)
-	create_static_box("Window Frame Bottom", Vector3(width, 0.08, 0.09), Vector3(center, bottom - 0.01, frame_z), TRIM, false)
-	create_static_box("Window Frame Left", Vector3(0.08, height, 0.09), Vector3(center - width * 0.5 - 0.01, y, frame_z), TRIM, false)
-	create_static_box("Window Frame Right", Vector3(0.08, height, 0.09), Vector3(center + width * 0.5 + 0.01, y, frame_z), TRIM, false)
-	create_static_box("Window Frame Center", Vector3(0.07, height, 0.09), Vector3(center, y, frame_z), TRIM, false)
-	create_static_box("Window Sill", Vector3(width + 0.30, 0.12, 0.32), Vector3(center, bottom - 0.16, frame_z), TRIM)
-
-func create_school_door(pos: Vector3, opens_north: bool) -> void:
-	var pivot: Node3D = Node3D.new()
-	pivot.name = "School Door Pivot"
-	pivot.position = Vector3(pos.x - 2.00, 0, pos.z)
-	add_child(pivot)
-
-	var face: float = -1.0 if opens_north else 1.0
-	var z_off: float = face * 0.070
-	var trim_z: float = pos.z + face * 0.16
-
-	create_static_box("Door Frame Top", Vector3(4.42, 0.16, 0.22), Vector3(pos.x, 4.03, trim_z), TRIM, false)
-	create_static_box("Door Frame Left", Vector3(0.16, 4.06, 0.22), Vector3(pos.x - 2.12, 2.02, trim_z), TRIM, false)
-	create_static_box("Door Frame Right", Vector3(0.16, 4.06, 0.22), Vector3(pos.x + 2.12, 2.02, trim_z), TRIM, false)
-	create_static_box("Door Inner Left Reveal", Vector3(0.08, 3.92, 0.30), Vector3(pos.x - 2.00, 1.96, pos.z + face * 0.02), WALL_INNER, false)
-	create_static_box("Door Inner Right Reveal", Vector3(0.08, 3.92, 0.30), Vector3(pos.x + 2.00, 1.96, pos.z + face * 0.02), WALL_INNER, false)
-	create_static_box("Door Threshold", Vector3(4.24, 0.08, 0.46), Vector3(pos.x, 0.04, pos.z + face * 0.02), METAL, false)
-
-	create_child_box(pivot, "Door Panel", Vector3(4.00, 3.96, 0.14), Vector3(2.00, 1.98, z_off), DOOR)
-	create_child_box(pivot, "Door Inset Top", Vector3(3.12, 0.86, 0.030), Vector3(2.00, 2.12, z_off * 1.75), DOOR_DARK, false)
-	create_child_box(pivot, "Door Inset Bottom", Vector3(3.12, 0.92, 0.030), Vector3(2.00, 1.02, z_off * 1.75), DOOR_DARK, false)
-	create_child_box(pivot, "Door Window", Vector3(0.72, 0.82, 0.040), Vector3(2.00, 3.00, z_off * 1.85), GLASS, false)
-	create_child_box(pivot, "Door Handle", Vector3(0.11, 0.22, 0.11), Vector3(3.52, 1.92, z_off * 2.05), METAL)
-	create_child_box(pivot, "Door Kick Plate", Vector3(3.25, 0.16, 0.030), Vector3(2.00, 0.42, z_off * 1.88), METAL, false)
-
-	var open_angle: float = 108.0 if opens_north else -108.0
-	doors.append({
-		"node": pivot,
-		"open": false,
-		"closed": Vector3.ZERO,
-		"opened": Vector3(0, open_angle, 0)
-	})
-
-func build_hallway() -> void:
-	create_static_box("Hallway Floor", Vector3(BUILDING_W - 2.0, 0.08, HALL_Z1 - HALL_Z0), Vector3(0, 0.04, 0), HALL_FLOOR)
-	create_static_box("Hallway Center Band", Vector3(BUILDING_W - 4.0, 0.09, 2.15), Vector3(0, 0.095, 0), Color(0.66, 0.62, 0.48))
-
-	add_base_trim_x(HALL_Z0 + 0.22, -HALF_W, HALF_W, [opening(0, 4.8, 0, 4.1)])
-	add_base_trim_x(HALL_Z1 - 0.22, -HALF_W, HALF_W, [
-		opening(-36, 4.8, 0, 4.1),
-		opening(0, 4.8, 0, 4.1),
-		opening(36, 4.8, 0, 4.1)
-	])
-
-	for x in range(-44, 45, 8):
-		create_light_fixture(Vector3(float(x), WALL_H + 0.12, 0))
-
-	create_locker_bank(Vector3(-42.0, 0, HALL_Z0 + 1.12), -1, 3)
-	create_locker_bank(Vector3(38.0, 0, HALL_Z1 - 1.12), 1, 3)
-
-	create_bench(Vector3(-28.0, 0, -4.30), 0)
-	create_bench(Vector3(25.0, 0, -4.30), 0)
-	create_bench(Vector3(-25.0, 0, 4.30), 180)
-
-	create_water_fountain(Vector3(-45.4, 0, -4.0), 90)
-	create_trash_can(Vector3(-18.0, 0, -4.82))
-	create_trash_can(Vector3(34.0, 0, -4.82))
-	create_trash_can(Vector3(21.0, 0, 4.82))
-
-	create_bulletin_board(Vector3(-25, 2.45, HALL_Z0 + 0.24), false)
-	create_bulletin_board(Vector3(23, 2.45, HALL_Z1 - 0.24), true)
-
-func add_base_trim_x(z: float, x0: float, x1: float, blocked: Array) -> void:
-	var cuts: Array = [x0, x1]
-
-	for o in blocked:
-		cuts.append(float(o["center"]) - float(o["width"]) * 0.5)
-		cuts.append(float(o["center"]) + float(o["width"]) * 0.5)
-
-	cuts.sort()
-
-	for i in range(cuts.size() - 1):
-		var a: float = float(cuts[i])
-		var b: float = float(cuts[i + 1])
-		var mid: float = (a + b) * 0.5
-
-		if b - a <= 0.01:
-			continue
-		if blocked_at(mid, blocked):
-			continue
-
-		create_static_box("Base Trim", Vector3((b - a) + EPS, 0.18, 0.08), Vector3(mid, 0.34, z), TRIM)
-
-func blocked_at(axis: float, blocked: Array) -> bool:
-	for o in blocked:
-		var left: float = float(o["center"]) - float(o["width"]) * 0.5
-		var right: float = float(o["center"]) + float(o["width"]) * 0.5
-		if axis >= left and axis <= right:
-			return true
-	return false
-
-func create_locker_bank(pos: Vector3, side: int, count: int) -> void:
-	var z: float = pos.z
-
-	for i in range(count):
-		var x: float = pos.x + float(i) * 1.55
-		create_static_box("Locker Body", Vector3(1.25, 2.78, 0.42), Vector3(x, 1.39, z), BLUE)
-		create_static_box("Locker Recess", Vector3(0.94, 2.18, 0.055), Vector3(x, 1.39, z - 0.24 * float(side)), BLUE.darkened(0.12), false)
-		create_static_box("Locker Vent", Vector3(0.60, 0.045, 0.055), Vector3(x, 2.28, z - 0.27 * float(side)), METAL, false)
-		create_static_box("Locker Handle", Vector3(0.06, 0.26, 0.06), Vector3(x + 0.34, 1.38, z - 0.29 * float(side)), METAL)
-		create_static_box("Locker Base", Vector3(1.18, 0.10, 0.06), Vector3(x, 0.06, z - 0.28 * float(side)), TRIM)
-
-func build_room_101_pool() -> void:
-	create_static_box("Room 101 Floor", Vector3(35.5, 0.08, 26.4), Vector3(0, 0.04, -21.0), Color(0.68, 0.78, 0.80))
-	create_static_box("Pool Basin", Vector3(22.0, 0.26, 11.0), Vector3(0, -0.70, -21.6), Color(0.02, 0.38, 0.60))
-	create_static_box("Pool Water", Vector3(21.2, 0.08, 10.2), Vector3(0, 0.13, -21.6), WATER, false)
-
-	create_static_box("Pool Rim North", Vector3(23.0, 0.42, 0.42), Vector3(0, 0.26, -27.25), WHITE)
-	create_static_box("Pool Rim South", Vector3(23.0, 0.42, 0.42), Vector3(0, 0.26, -15.95), WHITE)
-	create_static_box("Pool Rim West", Vector3(0.42, 0.42, 11.3), Vector3(-11.5, 0.26, -21.6), WHITE)
-	create_static_box("Pool Rim East", Vector3(0.42, 0.42, 11.3), Vector3(11.5, 0.26, -21.6), WHITE)
-
-	for lane in range(4):
-		create_static_box("Pool Lane Divider", Vector3(0.08, 0.08, 10.0), Vector3(-6.0 + float(lane) * 4.0, 0.25, -21.6), RED, false)
-
-	for i in range(5):
-		create_static_box("Pool Starting Block", Vector3(0.95, 0.50, 0.85), Vector3(-8.0 + float(i) * 4.0, 0.32, -15.2), Color(0.82, 0.76, 0.38))
-
-	for z in [-28.5, -25.7, -22.9, -20.1]:
-		create_bench(Vector3(-13.4, 0, z), 90)
-
-	create_static_box("Lifeguard Pole", Vector3(0.20, 2.3, 0.20), Vector3(13.2, 1.15, -15.2), METAL)
-	create_static_box("Lifeguard Seat", Vector3(1.35, 0.16, 1.25), Vector3(13.2, 2.38, -15.2), RED)
-	create_static_box("Lifeguard Back", Vector3(1.35, 0.90, 0.14), Vector3(13.2, 2.85, -15.85), RED)
-
-func build_room_102_classroom() -> void:
-	var x: float = -36.0
-	var z: float = 21.0
-
-	create_static_box("Room 102 Floor", Vector3(23.4, 0.08, 26.4), Vector3(x, 0.04, z), Color(0.74, 0.63, 0.48))
-	create_static_box("Blackboard", Vector3(9.6, 1.9, 0.10), Vector3(x, 2.85, 33.74), Color(0.04, 0.30, 0.14))
-	create_static_box("Board Tray", Vector3(9.8, 0.10, 0.16), Vector3(x, 1.84, 33.58), METAL)
-
-	create_teacher_desk(Vector3(x, 0, 29.5), 0)
-
-	for row in range(3):
-		for col in range(3):
-			create_student_desk(Vector3(x - 6.2 + float(col) * 6.2, 0, z - 4.8 + float(row) * 4.4), 0)
-
-	create_bookshelf(Vector3(x - 10.3, 0, 29.0), 90)
-
-func build_room_103_lab() -> void:
-	var x: float = 0.0
-	var z: float = 21.0
-
-	create_static_box("Room 103 Floor", Vector3(35.5, 0.08, 26.4), Vector3(x, 0.04, z), Color(0.58, 0.70, 0.60))
-	create_static_box("Lab Board", Vector3(8.4, 1.9, 0.10), Vector3(x - 4.5, 2.85, 33.74), Color(0.82, 0.86, 0.70))
-
-	for i in range(3):
-		create_lab_table(Vector3(x, 0, z - 6.5 + float(i) * 5.4))
-
-	for i in range(5):
-		create_microscope(Vector3(x - 6.0 + float(i) * 3.0, 0, z - 7.2 + float(i % 3) * 5.4))
-
-	create_cabinet(Vector3(-14, 0, 30.2), 0, GREEN)
-	create_cabinet(Vector3(14, 0, 30.2), 0, GREEN)
-	create_cabinet(Vector3(-14, 0, 18.8), 180, GREEN)
-	create_cabinet(Vector3(14, 0, 18.8), 180, GREEN)
-
-func build_room_104_office() -> void:
-	var x: float = 36.0
-
-	create_static_box("Room 104 Carpet", Vector3(23.4, 0.08, 26.4), Vector3(x, 0.04, 21.0), Color(0.58, 0.35, 0.36))
-
-	create_principal_desk(Vector3(x, 0, 28.8), 0)
-	create_office_chair(Vector3(x, 0, 31.05), 0)
-	create_cabinet(Vector3(x - 10.0, 0, 28.6), 90, Color(0.54, 0.54, 0.50))
-	create_bookshelf(Vector3(x + 10.2, 0, 24.5), -90)
-	create_office_couch(Vector3(x - 5.0, 0, 16.2), 0)
-
-func build_pickups() -> void:
-	pickup_floor("Hall Backpack", Vector3(0.9, 0.7, 0.45), -8.5, 3.4, Color(0.58, 0.14, 0.30), 1.2)
-	pickup_floor("Hall Ball Block", Vector3(0.62, 0.62, 0.62), 14.0, -3.8, Color(0.76, 0.34, 0.08), 1.0)
-	pickup_floor("Mop Bucket", Vector3(0.85, 0.55, 0.85), 41.0, -4.3, Color(0.20, 0.38, 0.58), 1.4)
-
-	pickup_on_table("Book Red", Vector3(0.65, 0.14, 0.50), -35.0, 29.5, 1.09, RED, 0.6)
-	pickup_on_table("Book Blue", Vector3(0.65, 0.14, 0.50), -32.0, 20.0, 0.82, BLUE, 0.6)
-	pickup_on_table("Clipboard", Vector3(0.75, 0.08, 0.55), -39.5, 16.8, 0.82, Color(0.76, 0.66, 0.42), 0.5)
-
-	pickup_on_table("Lab Sample", Vector3(0.36, 0.52, 0.36), 3.5, 24.0, 1.05, Color(0.20, 0.62, 0.38), 0.6)
-	pickup_on_table("Lab Notebook", Vector3(0.72, 0.10, 0.52), -4.0, 19.5, 1.05, Color(0.18, 0.24, 0.50), 0.5)
-
-	pickup_on_table("Office Stamp", Vector3(0.42, 0.30, 0.42), 38.4, 28.4, 1.10, RED, 0.8)
-	pickup_on_table("Office Folder", Vector3(0.78, 0.08, 0.52), 34.2, 28.8, 1.10, Color(0.70, 0.56, 0.22), 0.5)
-
-	pickup_on_table("Pool Float Board", Vector3(1.3, 0.12, 0.55), -12.0, -25.7, 0.62, Color(0.82, 0.72, 0.24), 0.7)
-	pickup_on_table("Pool Towel", Vector3(1.1, 0.10, 0.55), -13.2, -22.9, 0.62, Color(0.68, 0.24, 0.28), 0.5)
-
-func pickup_floor(n: String, size: Vector3, x: float, z: float, col: Color, mass_value: float) -> void:
-	pickup_box(n, size, Vector3(x, size.y * 0.5 + 0.03, z), col, mass_value)
-
-func pickup_on_table(n: String, size: Vector3, x: float, z: float, table_y: float, col: Color, mass_value: float) -> void:
-	pickup_box(n, size, Vector3(x, table_y + size.y * 0.5 + 0.025, z), col, mass_value)
-
-func pickup_box(n: String, size: Vector3, pos: Vector3, col: Color, mass_value: float) -> RigidBody3D:
-	var body: RigidBody3D = RigidBody3D.new()
-	body.name = n
-	body.position = pos
-	body.mass = mass_value
-	body.collision_layer = 1
-	body.collision_mask = 1
-	add_child(body)
-
-	var mesh_inst: MeshInstance3D = MeshInstance3D.new()
-	var mesh: BoxMesh = BoxMesh.new()
-	mesh.size = size
-	mesh_inst.mesh = mesh
-	mesh_inst.material_override = material(col)
-	body.add_child(mesh_inst)
-
-	var col_shape: CollisionShape3D = CollisionShape3D.new()
-	var shape: BoxShape3D = BoxShape3D.new()
-	shape.size = size
-	col_shape.shape = shape
-	body.add_child(col_shape)
-
-	pickups.append(body)
-	return body
-
-func interact() -> void:
-	if held != null and is_instance_valid(held):
-		throw_held()
-=======
 func _wall_x_piece(name: String, z: float, x0: float, x1: float, y0: float, y1: float) -> void:
 	if x1 <= x0 or y1 <= y0:
->>>>>>> Stashed changes
 		return
 
 	_box(
@@ -580,7 +342,7 @@ func _ceiling(name: String, x0: float, x1: float, z0: float, z1: float) -> void:
 
 func _build_structure() -> void:
 	_floor("HallFloor", HALL_X0, HALL_X1, HALL_Z0, HALL_Z1, _mat("hall_floor", Color(0.44, 0.55, 0.53)))
-	_box("HallRunner", Vector3(0.0, 0.035, 0.0), Vector3(100.0, 0.045, 1.85), _mat("runner_clean", Color(0.66, 0.61, 0.36)), false)
+	_box("HallRunner", Vector3(0.0, 0.055, 0.0), Vector3(100.0, 0.08, 1.85), _mat("runner_clean", Color(0.66, 0.61, 0.36)), false)
 
 	_floor("PoolFloor", POOL_X0, POOL_X1, POOL_Z0, POOL_Z1, _mat("pool_floor", Color(0.43, 0.58, 0.60)))
 	_floor("ClassroomFloor", CLASS_X0, CLASS_X1, ROOM_Z0, ROOM_Z1, _mat("class_floor", Color(0.54, 0.50, 0.40)))
@@ -735,26 +497,10 @@ func _toggle_nearest_door() -> void:
 	if best.is_empty() or best_dist > 4.0:
 		return
 
-<<<<<<< Updated upstream
-	held.freeze = false
-	held.gravity_scale = 1.0
-	held.linear_velocity = (-camera.global_transform.basis.z * THROW_FORCE) + Vector3(0, 3.0, 0)
-	held.angular_velocity = Vector3(randf_range(-5.5, 5.5), randf_range(-6.0, 6.0), randf_range(-5.5, 5.5))
-	
-	var thrown = held
-	held = null
-	thrown.contact_monitor = true
-	thrown.max_contacts_reported = 4
-	thrown.body_entered.connect(func(body):
-		if body.is_in_group("npc") and body.currState == body.State.STUCK:
-			body.receive_hit(thrown.linear_velocity.length())
-	)
-=======
 	if abs(float(best["target"]) - float(best["open"])) < 0.05:
 		best["target"] = float(best["closed"])
 	else:
 		best["target"] = float(best["open"])
->>>>>>> Stashed changes
 
 
 func _build_hallway() -> void:
@@ -784,7 +530,8 @@ func _build_hallway() -> void:
 	_box("BulletinB_Paper1", Vector3(43.9, 2.2, 5.91), Vector3(0.8, 0.55, 0.035), paper, false)
 	_box("BulletinB_Paper2", Vector3(46.0, 1.95, 5.91), Vector3(0.85, 0.45, 0.035), _mat("bluepaper", Color(0.12, 0.18, 0.48)), false)
 
-	for x_value: float in [-44.0, -28.0, -12.0, 4.0, 20.0, 36.0]:
+	var light_xs: Array[float] = [-44.0, -28.0, -12.0, 4.0, 20.0, 36.0]
+	for x_value: float in light_xs:
 		_make_light("HallLight" + str(x_value), Vector3(x_value, WALL_H - 0.08, 0.0))
 
 
@@ -813,7 +560,8 @@ func _make_bench(name: String, pos: Vector3, rot_y: float, mat: Material) -> voi
 	_box(name + "_Seat", Vector3(0.0, 0.55, 0.0), Vector3(3.4, 0.20, 0.55), mat, true, node)
 	_box(name + "_Back", Vector3(0.0, 1.08, 0.34), Vector3(3.4, 0.75, 0.18), mat, true, node)
 
-	for x: float in [-1.35, 1.35]:
+	var leg_xs: Array[float] = [-1.35, 1.35]
+	for x: float in leg_xs:
 		_box(name + "_LegA" + str(x), Vector3(x, 0.25, -0.18), Vector3(0.16, 0.50, 0.16), mat, true, node)
 		_box(name + "_LegB" + str(x), Vector3(x, 0.25, 0.20), Vector3(0.16, 0.50, 0.16), mat, true, node)
 
@@ -845,7 +593,8 @@ func _build_pool() -> void:
 	_box("PoolBorderW", Vector3(-11.75, 0.15, -20.0), Vector3(0.45, 0.14, 13.8), tile)
 	_box("PoolBorderE", Vector3(11.75, 0.15, -20.0), Vector3(0.45, 0.14, 13.8), tile)
 
-	for x_value: float in [-7.0, 0.0, 7.0]:
+	var lane_xs: Array[float] = [-7.0, 0.0, 7.0]
+	for x_value: float in lane_xs:
 		_box("PoolLane" + str(x_value), Vector3(x_value, 0.18, -20.0), Vector3(0.08, 0.025, 12.3), red, false)
 
 	_make_bench("PoolBenchA", Vector3(-23.0, 0.0, -15.0), PI * 0.5, bench)
@@ -866,8 +615,10 @@ func _make_lifeguard_chair(pos: Vector3) -> void:
 	_box("LifeguardSeat", Vector3(0.0, 2.15, 0.0), Vector3(1.1, 0.20, 0.85), mat, true, node)
 	_box("LifeguardBack", Vector3(0.0, 2.55, 0.42), Vector3(1.1, 0.65, 0.16), mat, true, node)
 
-	for x: float in [-0.45, 0.45]:
-		for z: float in [-0.28, 0.28]:
+	var xs: Array[float] = [-0.45, 0.45]
+	var zs: Array[float] = [-0.28, 0.28]
+	for x: float in xs:
+		for z: float in zs:
 			_box("LifeguardLeg", Vector3(x, 1.05, z), Vector3(0.12, 2.1, 0.12), metal, true, node)
 
 	_box("LifeguardStep1", Vector3(0.0, 0.8, -0.7), Vector3(1.15, 0.10, 0.15), metal, true, node)
@@ -910,8 +661,10 @@ func _make_student_desk(name: String, pos: Vector3, rot_y: float, desk_mat: Mate
 	_box(name + "_Top", Vector3(0.0, 0.72, 0.0), Vector3(1.9, 0.16, 1.0), desk_mat, true, node)
 	_box(name + "_Bin", Vector3(0.0, 0.52, 0.18), Vector3(1.65, 0.25, 0.65), desk_shadow, true, node)
 
-	for x: float in [-0.75, 0.75]:
-		for z: float in [-0.35, 0.35]:
+	var xs: Array[float] = [-0.75, 0.75]
+	var zs: Array[float] = [-0.35, 0.35]
+	for x: float in xs:
+		for z: float in zs:
 			_box(name + "_Leg", Vector3(x, 0.33, z), Vector3(0.09, 0.66, 0.09), metal_mat, true, node)
 
 	_box(name + "_ChairSeat", Vector3(0.0, 0.45, 1.05), Vector3(0.95, 0.15, 0.75), chair_mat, true, node)
@@ -944,7 +697,8 @@ func _make_bookshelf(name: String, pos: Vector3, rot_y: float) -> void:
 
 	_box(name + "_Back", Vector3(0.0, 1.25, 0.0), Vector3(3.0, 2.5, 0.32), wood, true, node)
 
-	for y: float in [0.55, 1.20, 1.85]:
+	var shelf_ys: Array[float] = [0.55, 1.20, 1.85]
+	for y: float in shelf_ys:
 		_box(name + "_Shelf" + str(y), Vector3(0.0, y, -0.25), Vector3(3.1, 0.10, 0.42), wood, true, node)
 
 	for i: int in range(12):
@@ -959,7 +713,8 @@ func _build_lab() -> void:
 	var cabinet: Material = _mat("lab_cabinet", Color(0.12, 0.24, 0.15))
 	var black: Material = _mat("black", Color(0.02, 0.025, 0.025))
 
-	for z_value: float in [14.0, 23.0]:
+	var table_zs: Array[float] = [14.0, 23.0]
+	for z_value: float in table_zs:
 		_make_lab_table("LabTableA" + str(z_value), Vector3(-7.0, 0.0, z_value), table)
 		_make_lab_table("LabTableB" + str(z_value), Vector3(7.0, 0.0, z_value), table)
 
@@ -1065,7 +820,8 @@ func _make_filing(name: String, pos: Vector3, rot_y: float, mat: Material) -> vo
 
 	_box(name + "_Body", Vector3(0.0, 1.05, 0.0), Vector3(1.2, 2.1, 0.85), mat, true, node)
 
-	for y: float in [0.65, 1.15, 1.65]:
+	var drawer_ys: Array[float] = [0.65, 1.15, 1.65]
+	for y: float in drawer_ys:
 		_box(name + "_Drawer" + str(y), Vector3(0.0, y, -0.45), Vector3(1.0, 0.32, 0.04), _mat("drawer", Color(0.18, 0.21, 0.23)), false, node)
 		_box(name + "_Handle" + str(y), Vector3(0.0, y, -0.50), Vector3(0.40, 0.05, 0.04), _mat("metal", Color(0.65, 0.63, 0.48)), false, node)
 
@@ -1089,20 +845,11 @@ func _make_light(name: String, pos: Vector3) -> void:
 	_box(name + "_Panel", pos + Vector3(0.0, -0.04, 0.0), Vector3(1.24, 0.035, 0.28), glow, false)
 
 	var light: OmniLight3D = OmniLight3D.new()
-<<<<<<< Updated upstream
-	light.name = "Ceiling Light"
-	light.position = pos
-	light.omni_range = range_value
-	light.light_energy = energy
-	light.light_color = col
-	light.shadow_enabled = false
-=======
 	light.name = name + "_Omni"
 	light.position = pos + Vector3(0.0, -0.35, 0.0)
 	light.light_color = Color(1.0, 0.92, 0.62)
 	light.light_energy = 0.65
 	light.omni_range = 11.0
->>>>>>> Stashed changes
 	add_child(light)
 
 
