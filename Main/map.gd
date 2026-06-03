@@ -445,6 +445,8 @@ func pickup_box(n: String, size: Vector3, pos: Vector3, col: Color, mass_value: 
 	body.name = n
 	body.position = pos
 	body.mass = mass_value
+	body.collision_layer = 1
+	body.collision_mask = 1
 	add_child(body)
 
 	var mesh_inst: MeshInstance3D = MeshInstance3D.new()
@@ -524,7 +526,15 @@ func throw_held() -> void:
 	held.gravity_scale = 1.0
 	held.linear_velocity = (-camera.global_transform.basis.z * THROW_FORCE) + Vector3(0, 3.0, 0)
 	held.angular_velocity = Vector3(randf_range(-5.5, 5.5), randf_range(-6.0, 6.0), randf_range(-5.5, 5.5))
+	
+	var thrown = held
 	held = null
+	thrown.contact_monitor = true
+	thrown.max_contacts_reported = 4
+	thrown.body_entered.connect(func(body):
+		if body.is_in_group("npc") and body.currState == body.State.STUCK:
+			body.receive_hit(thrown.linear_velocity.length())
+	)
 
 func create_bench(pos: Vector3, rot_y: float) -> void:
 	var base: Node3D = Node3D.new()
