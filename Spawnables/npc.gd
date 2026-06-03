@@ -14,13 +14,15 @@ var bond_timer = 0.0
 var is_fully_bonded = false
 
 var pair = null
-var seek_range = 10
+var seek_range = 15
 
 var last_position = Vector3.ZERO
 var stuck_timer = 0.0
 var stuck_check_interval = 1.0  # check every second
 var stuck_threshold = 0.1  # how little movement counts as stuck
 
+var seek_tick = 0.0
+var seek_tick_rate = 0.1
 
 func _ready():
 	add_to_group("npc")
@@ -70,20 +72,20 @@ func _handle_wandering():
 	return
 	
 func _handle_seeking():
-	if pair == null:
+	if pair == null or not is_instance_valid(pair):
+		pair = null
 		currState = State.WANDERING
 		return
-		
-	stuck_timer += get_physics_process_delta_time()
-	if stuck_timer >= stuck_check_interval:
-		stuck_timer = 0.0
-		if global_position.distance_to(last_position) < stuck_threshold:
-			var angle = randf() * 2 * PI
-			direction = Vector3(cos(angle), 0, sin(angle))
-			velocity.x = direction.x * speed * 2.0
-			velocity.z = direction.z * speed * 2.0
-		last_position = global_position		
-		
+
+	seek_tick += get_physics_process_delta_time()
+	if seek_tick < seek_tick_rate:
+		# still move toward last known direction
+		velocity.x = velocity.x
+		velocity.z = velocity.z
+		return
+	seek_tick = 0.0
+
+	# only recalculate 10 times per second
 	var dist = global_position.distance_to(pair.global_position)
 	if dist < 1:
 		currState = State.BONDING

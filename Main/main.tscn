@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bk2rxxg745mu7"]
 
-[ext_resource type="Script" uid="uid://cxdddhv43u3w8" path="res://Main/main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://rmaq40le2cbf" path="res://Main/main.gd" id="1_main"]
 [ext_resource type="Script" uid="uid://dwlgxpngpwij8" path="res://Main/player.gd" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://ciricousd1hsa" path="res://Main/map.tscn" id="3_map"]
 
@@ -12,7 +12,7 @@ height = 1.75
 sky_top_color = Color(0.46, 0.62, 0.82, 1)
 sky_horizon_color = Color(0.78, 0.84, 0.88, 1)
 ground_bottom_color = Color(0.45, 0.48, 0.44, 1)
-ground_horizon_color = Color(0.58, 0.62, 0.60, 1)
+ground_horizon_color = Color(0.58, 0.62, 0.6, 1)
 
 [sub_resource type="Sky" id="Sky_school"]
 sky_material = SubResource("ProceduralSkyMaterial_school")
@@ -46,3 +46,4 @@ shadow_enabled = true
 environment = SubResource("Environment_school")
 
 [node name="Map" parent="." unique_id=899873080 instance=ExtResource("3_map")]
+clear_old_scene_siblings = true

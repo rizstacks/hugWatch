@@ -1,5 +1,7 @@
 extends Node3D
 
+@export var clear_old_scene_siblings: bool = false
+
 const KEY_INTERACT := KEY_E
 const INTERACT_DISTANCE := 4.0
 const HOLD_DISTANCE := 2.15
@@ -678,7 +680,7 @@ func omni(pos: Vector3, range_value: float, energy: float, col: Color) -> void:
 	light.omni_range = range_value
 	light.light_energy = energy
 	light.light_color = col
-	light.shadow_enabled = true
+	light.shadow_enabled = false
 	add_child(light)
 
 func create_static_box(n: String, size: Vector3, pos: Vector3, col: Color, collision_enabled: bool = true) -> StaticBody3D:

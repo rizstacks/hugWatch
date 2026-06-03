@@ -37,9 +37,7 @@ func _physics_process(delta: float):
 		direction += transform.basis.x
 	
 	if Input.is_action_just_pressed("interact"):
-		print("interact pressed, npcs in group: ", get_tree().get_nodes_in_group("npc").size())
 		for npc in get_tree().get_nodes_in_group("npc"):
-			print("checking npc state: ", npc.currState, " dist: ", global_position.distance_to(npc.global_position))			
 			if npc.currState == npc.State.STUCK:
 				var dist = global_position.distance_to(npc.global_position)
 				if dist < 2.0:  # interact range
