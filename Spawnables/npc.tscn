@@ -1,18 +1,17 @@
 [gd_scene format=3 uid="uid://bj3tvpi2urau8"]
 
 [ext_resource type="Script" uid="uid://cie2l8wc6l6i0" path="res://Spawnables/npc.gd" id="1_rvh3u"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_owxeg"]
+[ext_resource type="PackedScene" uid="uid://1luuq8skq06h" path="res://Spawnables/male_casual 2/male_casual.fbx" id="2_ph0d5"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dl6f1"]
 
 [node name="Npc" type="CharacterBody3D" unique_id=728364066]
 script = ExtResource("1_rvh3u")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=986232464]
-mesh = SubResource("CapsuleMesh_owxeg")
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=900900571]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 0, 0)
 shape = SubResource("CapsuleShape3D_dl6f1")
 
 [node name="walkTimer" type="Timer" parent="." unique_id=2115360942]
+
+[node name="male_casual" parent="." unique_id=1664797934 instance=ExtResource("2_ph0d5")]

@@ -1,6 +1,6 @@
 extends Node3D
 
-@export var npcCount = 10
+@export var npcCount = 32
 var npcScene = preload("res://Spawnables/npc.tscn")
 
 func _ready():
