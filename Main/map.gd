@@ -28,12 +28,17 @@ const ROOM_Z1: float = 34.0
 var mats: Dictionary = {}
 var doors: Array[Dictionary] = []
 
+var held: RigidBody3D = null
+const HOLD_DISTANCE := 2.15
+const THROW_FORCE := 17.0
+
 
 func _ready() -> void:
 	build_map()
 
 
 func _process(delta: float) -> void:
+	_process_held()
 	for door_data: Dictionary in doors:
 		var pivot: Node3D = door_data["pivot"] as Node3D
 		var target: float = float(door_data["target"])
@@ -44,8 +49,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey:
 		var key_event: InputEventKey = event as InputEventKey
 		if key_event.pressed and not key_event.echo and key_event.keycode == KEY_E:
-			_toggle_nearest_door()
-
+			if held != null and is_instance_valid(held):
+				_throw_held()
+			else:
+				_toggle_nearest_door()
+				_try_pickup()
 
 func build_map() -> void:
 	_clear()
@@ -61,7 +69,45 @@ func build_map() -> void:
 	_build_pickups()
 	_build_lights()
 
+func _try_pickup() -> void:
+	var camera: Camera3D = get_viewport().get_camera_3d()
+	if camera == null:
+		return
+	for pickup in get_tree().get_nodes_in_group("pickup"):
+		if is_instance_valid(pickup):
+			var dist: float = camera.global_position.distance_to(pickup.global_position)
+			if dist < 3.0:
+				held = pickup as RigidBody3D
+				held.freeze = true
+				held.gravity_scale = 0.0
+				return
 
+func _throw_held() -> void:
+	var camera: Camera3D = get_viewport().get_camera_3d()
+	if camera == null or held == null:
+		return
+	held.freeze = false
+	held.gravity_scale = 1.0
+	held.linear_velocity = (-camera.global_transform.basis.z * THROW_FORCE) + Vector3(0, 3.0, 0)
+	held.angular_velocity = Vector3(randf_range(-5.5, 5.5), randf_range(-6.0, 6.0), randf_range(-5.5, 5.5))
+	var thrown = held
+	held = null
+	thrown.contact_monitor = true
+	thrown.max_contacts_reported = 4
+	thrown.body_entered.connect(func(body):
+		if body.is_in_group("npc") and body.currState == body.State.STUCK:
+			body.receive_hit(thrown.linear_velocity.length())
+	)
+
+func _process_held() -> void:
+	if held != null and is_instance_valid(held):
+		var camera: Camera3D = get_viewport().get_camera_3d()
+		if camera != null:
+			var target: Vector3 = camera.global_position + (-camera.global_transform.basis.z * HOLD_DISTANCE) + Vector3(0, -0.35, 0)
+			held.global_position = held.global_position.lerp(target, 0.42)
+			held.linear_velocity = Vector3.ZERO
+			held.angular_velocity = Vector3.ZERO
+			
 func _clear() -> void:
 	for child: Node in get_children():
 		child.queue_free()
@@ -165,6 +211,8 @@ func _pickup_box(name: String, pos: Vector3, size: Vector3, material: Material, 
 	body.gravity_scale = 1.0
 	body.linear_damp = 0.2
 	body.angular_damp = 0.2
+	body.collision_layer = 1
+	body.collision_mask = 1
 	body.add_to_group("pickup")
 	add_child(body)
 
