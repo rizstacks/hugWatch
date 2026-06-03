@@ -6,10 +6,10 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4flbx"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_4flbx"]
-size = Vector3(20, 1, 20)
+size = Vector3(40, 1, 40)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_onrkg"]
-size = Vector3(20, 1, 20)
+size = Vector3(200, 1, 200)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4flbx"]
 
@@ -28,12 +28,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 script = ExtResource("2_eunhr")
 
 [node name="Camera3D" type="Camera3D" parent="Player" unique_id=29262232]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1132795497]
 shape = SubResource("CapsuleShape3D_4flbx")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1040547865]
-transform = Transform3D(0.22899647, 0, 0.97342724, 0, 1, 0, -0.97342724, 0, 0.22899647, 0, 0, 0)
+transform = Transform3D(0.45799294, 0, 1.9468545, 0, 2, 0, -1.9468545, 0, 0.45799294, 0, 0, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D" unique_id=1386823550]
 mesh = SubResource("BoxMesh_4flbx")

@@ -14,7 +14,9 @@ func _input(event):
 	
 	if event is InputEventKey:
 		if event.keycode == KEY_ESCAPE:
-			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)		
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	
+	
 
 func _physics_process(delta: float):
 	var direction = Vector3.ZERO
@@ -33,6 +35,16 @@ func _physics_process(delta: float):
 		direction -= transform.basis.x
 	if Input.is_key_pressed(KEY_D):
 		direction += transform.basis.x
+	
+	if Input.is_action_just_pressed("interact"):
+		print("interact pressed, npcs in group: ", get_tree().get_nodes_in_group("npc").size())
+		for npc in get_tree().get_nodes_in_group("npc"):
+			print("checking npc state: ", npc.currState, " dist: ", global_position.distance_to(npc.global_position))			
+			if npc.currState == npc.State.STUCK:
+				var dist = global_position.distance_to(npc.global_position)
+				if dist < 2.0:  # interact range
+					npc.receive_hit(999)  # force break regardless of impulse
+					break
 	
 	if direction != Vector3.ZERO:
 		velocity.x = direction.normalized().x * speed
