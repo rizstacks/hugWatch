@@ -1,74 +1,48 @@
 [gd_scene format=3 uid="uid://bk2rxxg745mu7"]
 
-[ext_resource type="Script" uid="uid://cxdddhv43u3w8" path="res://Main/main.gd" id="1_qvhan"]
-[ext_resource type="Script" uid="uid://dwlgxpngpwij8" path="res://Main/player.gd" id="2_eunhr"]
-[ext_resource type="PackedScene" uid="uid://1luuq8skq06h" path="res://Spawnables/male_casual 2/male_casual.fbx" id="3_k3v36"]
-[ext_resource type="PackedScene" uid="uid://ciricousd1hsa" path="res://Main/map.tscn" id="3_qvhan"]
-[ext_resource type="Script" uid="uid://bpsccpcgsbvl5" path="res://Main/map.gd" id="4_eunhr"]
-[ext_resource type="Script" uid="uid://cie2l8wc6l6i0" path="res://Spawnables/npc.gd" id="4_liyct"]
+[ext_resource type="Script" uid="uid://cxdddhv43u3w8" path="res://Main/main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://dwlgxpngpwij8" path="res://Main/player.gd" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://ciricousd1hsa" path="res://Main/map.tscn" id="3_map"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4flbx"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.38
+height = 1.75
 
-<<<<<<< HEAD
-[sub_resource type="BoxMesh" id="BoxMesh_4flbx"]
-size = Vector3(40, 1, 40)
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_school"]
+sky_top_color = Color(0.46, 0.62, 0.82, 1)
+sky_horizon_color = Color(0.78, 0.84, 0.88, 1)
+ground_bottom_color = Color(0.45, 0.48, 0.44, 1)
+ground_horizon_color = Color(0.58, 0.62, 0.60, 1)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_onrkg"]
-size = Vector3(200, 1, 200)
+[sub_resource type="Sky" id="Sky_school"]
+sky_material = SubResource("ProceduralSkyMaterial_school")
 
-=======
->>>>>>> leon
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4flbx"]
-
-[sub_resource type="Sky" id="Sky_onrkg"]
-sky_material = SubResource("ProceduralSkyMaterial_4flbx")
-
-[sub_resource type="Environment" id="Environment_4flbx"]
+[sub_resource type="Environment" id="Environment_school"]
 background_mode = 2
-sky = SubResource("Sky_onrkg")
+sky = SubResource("Sky_school")
+ambient_light_source = 2
+ambient_light_color = Color(0.75, 0.78, 0.74, 1)
+ambient_light_energy = 0.45
 
 [node name="Main" type="Node3D" unique_id=1322912856]
-script = ExtResource("1_qvhan")
+script = ExtResource("1_main")
 
 [node name="Player" type="CharacterBody3D" parent="." unique_id=4466265]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-script = ExtResource("2_eunhr")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 2.25)
+script = ExtResource("2_player")
 
 [node name="Camera3D" type="Camera3D" parent="Player" unique_id=29262232]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 0.9848077, 0.1736482, 0, -0.1736482, 0.9848077, 0, 0.78, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1132795497]
-shape = SubResource("CapsuleShape3D_4flbx")
+shape = SubResource("CapsuleShape3D_player")
 
-<<<<<<< HEAD
-[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1040547865]
-transform = Transform3D(0.45799294, 0, 1.9468545, 0, 2, 0, -1.9468545, 0, 0.45799294, 0, 0, 0)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D" unique_id=1386823550]
-mesh = SubResource("BoxMesh_4flbx")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=2125941536]
-shape = SubResource("BoxShape3D_onrkg")
-
-=======
->>>>>>> leon
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1159651446]
-transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 0, 0)
+transform = Transform3D(0.819152, -0.286788, 0.496732, 0, 0.866025, 0.5, -0.573576, -0.409576, 0.709406, 0, 0, 0)
+light_energy = 1.05
 shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1357525666]
-environment = SubResource("Environment_4flbx")
+environment = SubResource("Environment_school")
 
-[node name="Map" parent="." unique_id=899873080 instance=ExtResource("3_qvhan")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12408737, 0.5, 0.8519172)
-script = ExtResource("4_eunhr")
-
-[node name="npc" type="CharacterBody3D" parent="." unique_id=128957801]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="npc" unique_id=283955142]
-script = ExtResource("4_liyct")
-
-[node name="male_casual" parent="npc" unique_id=1373277864 instance=ExtResource("3_k3v36")]
-transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
-
-[node name="walkTimer" type="Timer" parent="npc" unique_id=1697910722]
+[node name="Map" parent="." unique_id=899873080 instance=ExtResource("3_map")]

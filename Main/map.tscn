@@ -1,8 +1,6 @@
-[gd_scene format=3 uid="uid://ciricousd1hsa"]
+[gd_scene load_steps=2 format=3 uid="uid://ciricousd1hsa"]
 
-[sub_resource type="GDScript" id="GDScript_w00bm"]
-script/source = "extends Node3D
-"
+[ext_resource type="Script" path="res://Main/map.gd" id="1_map"]
 
 [node name="Map" type="Node3D" unique_id=899873080]
-script = SubResource("GDScript_w00bm")
+script = ExtResource("1_map")

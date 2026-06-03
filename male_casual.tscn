@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://j6kvhmf78wxr"]
+
+[ext_resource type="PackedScene" uid="uid://1luuq8skq06h" path="res://Spawnables/male_casual 2/male_casual.fbx" id="1_lgpm3"]
+
+[node name="male_casual" unique_id=1664797934 instance=ExtResource("1_lgpm3")]

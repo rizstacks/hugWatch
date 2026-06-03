@@ -1,13 +1,4 @@
-@tool
 extends Node3D
-
-@export var rebuild_map_now: bool = false:
-	set(value):
-		rebuild_map_now = false
-		if value:
-			call_deferred("build_map")
-
-@export var clear_old_scene_siblings: bool = true
 
 const KEY_INTERACT := KEY_E
 const INTERACT_DISTANCE := 4.0
@@ -55,9 +46,6 @@ func _ready() -> void:
 	build_map()
 
 func _process(_delta: float) -> void:
-	if clear_old_scene_siblings:
-		clear_non_player_characters()
-
 	if held != null and is_instance_valid(held):
 		var camera: Camera3D = get_viewport().get_camera_3d()
 		if camera != null:
@@ -73,11 +61,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			interact()
 
 func build_map() -> void:
-	if clear_old_scene_siblings:
-		clear_old_map_siblings()
-
 	for child in get_children():
-		remove_node_now(child)
+		child.queue_free()
 
 	doors.clear()
 	pickups.clear()
@@ -91,36 +76,6 @@ func build_map() -> void:
 	build_room_104_office()
 	build_pickups()
 	add_lighting()
-
-func clear_old_map_siblings() -> void:
-	var parent: Node = get_parent()
-	if parent == null:
-		return
-
-	for child in parent.get_children():
-		if child == self:
-			continue
-		if child is StaticBody3D or child is RigidBody3D or child is MeshInstance3D:
-			remove_node_now(child)
-		elif child is CharacterBody3D and child.name != "Player":
-			remove_node_now(child)
-
-func clear_non_player_characters() -> void:
-	var root: Node = get_tree().current_scene
-	if root == null:
-		root = get_parent()
-	if root == null:
-		return
-
-	for child in root.get_children():
-		if child is CharacterBody3D and child.name != "Player":
-			remove_node_now(child)
-
-func remove_node_now(node: Node) -> void:
-	if Engine.is_editor_hint():
-		node.free()
-	else:
-		node.queue_free()
 
 func build_architecture() -> void:
 	create_static_box("Main Floor", Vector3(BUILDING_W, 0.35, BUILDING_D), Vector3(0, -0.18, 0), FLOOR)
@@ -289,60 +244,38 @@ func create_window_module(z: float, o: Dictionary, north_side: bool) -> void:
 	create_static_box("Window Frame Right", Vector3(0.08, height, 0.09), Vector3(center + width * 0.5 + 0.01, y, frame_z), TRIM, false)
 	create_static_box("Window Frame Center", Vector3(0.07, height, 0.09), Vector3(center, y, frame_z), TRIM, false)
 	create_static_box("Window Sill", Vector3(width + 0.30, 0.12, 0.32), Vector3(center, bottom - 0.16, frame_z), TRIM)
-	create_static_box("Window Clean Exterior", Vector3(width - 0.56, height - 0.48, 0.035), Vector3(center, y, z + face_dir * 0.18), Color(0.62, 0.76, 0.88, 0.38), false)
 
 func create_school_door(pos: Vector3, opens_north: bool) -> void:
+	var pivot: Node3D = Node3D.new()
+	pivot.name = "School Door Pivot"
+	pivot.position = Vector3(pos.x - 2.00, 0, pos.z)
+	add_child(pivot)
+
 	var face: float = -1.0 if opens_north else 1.0
-	var trim_z: float = pos.z + face * 0.18
-	var panel_z: float = face * 0.075
+	var z_off: float = face * 0.070
+	var trim_z: float = pos.z + face * 0.16
 
-	create_static_box("Door Frame Header", Vector3(4.36, 0.20, 0.34), Vector3(pos.x, 4.02, trim_z), TRIM, false)
-	create_static_box("Door Frame Left Jamb", Vector3(0.20, 4.05, 0.34), Vector3(pos.x - 2.08, 2.02, trim_z), TRIM, false)
-	create_static_box("Door Frame Right Jamb", Vector3(0.20, 4.05, 0.34), Vector3(pos.x + 2.08, 2.02, trim_z), TRIM, false)
-	create_static_box("Door Center Stop", Vector3(0.10, 3.82, 0.20), Vector3(pos.x, 1.91, trim_z), TRIM, false)
-	create_static_box("Door Threshold", Vector3(4.25, 0.08, 0.48), Vector3(pos.x, 0.04, pos.z + face * 0.02), METAL, false)
-	create_static_box("Door Shadow Recess", Vector3(4.05, 3.88, 0.05), Vector3(pos.x, 1.94, pos.z - face * 0.03), BLACK, false)
+	create_static_box("Door Frame Top", Vector3(4.42, 0.16, 0.22), Vector3(pos.x, 4.03, trim_z), TRIM, false)
+	create_static_box("Door Frame Left", Vector3(0.16, 4.06, 0.22), Vector3(pos.x - 2.12, 2.02, trim_z), TRIM, false)
+	create_static_box("Door Frame Right", Vector3(0.16, 4.06, 0.22), Vector3(pos.x + 2.12, 2.02, trim_z), TRIM, false)
+	create_static_box("Door Inner Left Reveal", Vector3(0.08, 3.92, 0.30), Vector3(pos.x - 2.00, 1.96, pos.z + face * 0.02), WALL_INNER, false)
+	create_static_box("Door Inner Right Reveal", Vector3(0.08, 3.92, 0.30), Vector3(pos.x + 2.00, 1.96, pos.z + face * 0.02), WALL_INNER, false)
+	create_static_box("Door Threshold", Vector3(4.24, 0.08, 0.46), Vector3(pos.x, 0.04, pos.z + face * 0.02), METAL, false)
 
-	var left_pivot: Node3D = Node3D.new()
-	left_pivot.name = "Left Door Pivot"
-	left_pivot.position = Vector3(pos.x - 1.96, 0.0, pos.z)
-	add_child(left_pivot)
+	create_child_box(pivot, "Door Panel", Vector3(4.00, 3.96, 0.14), Vector3(2.00, 1.98, z_off), DOOR)
+	create_child_box(pivot, "Door Inset Top", Vector3(3.12, 0.86, 0.030), Vector3(2.00, 2.12, z_off * 1.75), DOOR_DARK, false)
+	create_child_box(pivot, "Door Inset Bottom", Vector3(3.12, 0.92, 0.030), Vector3(2.00, 1.02, z_off * 1.75), DOOR_DARK, false)
+	create_child_box(pivot, "Door Window", Vector3(0.72, 0.82, 0.040), Vector3(2.00, 3.00, z_off * 1.85), GLASS, false)
+	create_child_box(pivot, "Door Handle", Vector3(0.11, 0.22, 0.11), Vector3(3.52, 1.92, z_off * 2.05), METAL)
+	create_child_box(pivot, "Door Kick Plate", Vector3(3.25, 0.16, 0.030), Vector3(2.00, 0.42, z_off * 1.88), METAL, false)
 
-	var right_pivot: Node3D = Node3D.new()
-	right_pivot.name = "Right Door Pivot"
-	right_pivot.position = Vector3(pos.x + 1.96, 0.0, pos.z)
-	add_child(right_pivot)
-
-	create_door_leaf(left_pivot, Vector3(0.96, 1.96, panel_z), -1.0)
-	create_door_leaf(right_pivot, Vector3(-0.96, 1.96, panel_z), 1.0)
-
-	var left_open: float = 96.0 if opens_north else -96.0
-	var right_open: float = -96.0 if opens_north else 96.0
+	var open_angle: float = 108.0 if opens_north else -108.0
 	doors.append({
-		"node": left_pivot,
+		"node": pivot,
 		"open": false,
 		"closed": Vector3.ZERO,
-		"opened": Vector3(0, left_open, 0)
+		"opened": Vector3(0, open_angle, 0)
 	})
-	doors.append({
-		"node": right_pivot,
-		"open": false,
-		"closed": Vector3.ZERO,
-		"opened": Vector3(0, right_open, 0)
-	})
-
-func create_door_leaf(parent: Node3D, center: Vector3, side: float) -> void:
-	create_child_box(parent, "Door Slab", Vector3(1.92, 3.72, 0.16), center, DOOR)
-	create_child_box(parent, "Door Outer Stile", Vector3(0.13, 3.58, 0.05), center + Vector3(side * 0.76, 0.0, center.z * 0.80), DOOR_DARK, false)
-	create_child_box(parent, "Door Inner Stile", Vector3(0.11, 3.58, 0.05), center + Vector3(-side * 0.78, 0.0, center.z * 0.80), DOOR_DARK, false)
-	create_child_box(parent, "Door Top Rail", Vector3(1.48, 0.12, 0.05), center + Vector3(0.0, 1.34, center.z * 0.80), DOOR_DARK, false)
-	create_child_box(parent, "Door Lock Rail", Vector3(1.48, 0.11, 0.05), center + Vector3(0.0, 0.00, center.z * 0.80), DOOR_DARK, false)
-	create_child_box(parent, "Door Bottom Rail", Vector3(1.48, 0.13, 0.05), center + Vector3(0.0, -1.43, center.z * 0.80), DOOR_DARK, false)
-	create_child_box(parent, "Door Glass Pane", Vector3(0.82, 0.88, 0.04), center + Vector3(0.0, 0.78, center.z * 1.40), GLASS, false)
-	create_child_box(parent, "Door Kick Plate", Vector3(1.30, 0.18, 0.04), center + Vector3(0.0, -1.35, center.z * 1.45), METAL, false)
-	create_child_box(parent, "Door Pull Handle", Vector3(0.08, 0.42, 0.08), center + Vector3(-side * 0.62, -0.02, center.z * 1.75), METAL)
-	create_child_box(parent, "Door Hinge Top", Vector3(0.10, 0.34, 0.08), center + Vector3(side * 0.88, 1.10, center.z * 1.55), METAL, false)
-	create_child_box(parent, "Door Hinge Bottom", Vector3(0.10, 0.34, 0.08), center + Vector3(side * 0.88, -1.10, center.z * 1.55), METAL, false)
 
 func build_hallway() -> void:
 	create_static_box("Hallway Floor", Vector3(BUILDING_W - 2.0, 0.08, HALL_Z1 - HALL_Z0), Vector3(0, 0.04, 0), HALL_FLOOR)
@@ -486,27 +419,24 @@ func build_pickups() -> void:
 	pickup_floor("Hall Ball Block", Vector3(0.62, 0.62, 0.62), 14.0, -3.8, Color(0.76, 0.34, 0.08), 1.0)
 	pickup_floor("Mop Bucket", Vector3(0.85, 0.55, 0.85), 41.0, -4.3, Color(0.20, 0.38, 0.58), 1.4)
 
-	pickup_on_surface("Book Red", Vector3(0.65, 0.14, 0.50), Vector3(-35.0, 1.115, 29.5), RED, 0.6)
-	pickup_on_surface("Book Blue", Vector3(0.65, 0.14, 0.50), Vector3(-32.0, 0.89, 20.0), BLUE, 0.6)
-	pickup_on_surface("Clipboard", Vector3(0.75, 0.08, 0.55), Vector3(-39.5, 0.89, 16.8), Color(0.76, 0.66, 0.42), 0.5)
+	pickup_on_table("Book Red", Vector3(0.65, 0.14, 0.50), -35.0, 29.5, 1.09, RED, 0.6)
+	pickup_on_table("Book Blue", Vector3(0.65, 0.14, 0.50), -32.0, 20.0, 0.82, BLUE, 0.6)
+	pickup_on_table("Clipboard", Vector3(0.75, 0.08, 0.55), -39.5, 16.8, 0.82, Color(0.76, 0.66, 0.42), 0.5)
 
-	pickup_on_surface("Lab Sample", Vector3(0.36, 0.52, 0.36), Vector3(3.5, 1.165, 24.0), Color(0.20, 0.62, 0.38), 0.6)
-	pickup_on_surface("Lab Notebook", Vector3(0.72, 0.10, 0.52), Vector3(-4.0, 1.165, 19.5), Color(0.18, 0.24, 0.50), 0.5)
+	pickup_on_table("Lab Sample", Vector3(0.36, 0.52, 0.36), 3.5, 24.0, 1.05, Color(0.20, 0.62, 0.38), 0.6)
+	pickup_on_table("Lab Notebook", Vector3(0.72, 0.10, 0.52), -4.0, 19.5, 1.05, Color(0.18, 0.24, 0.50), 0.5)
 
-	pickup_on_surface("Office Stamp", Vector3(0.42, 0.30, 0.42), Vector3(38.4, 1.125, 28.4), RED, 0.8)
-	pickup_on_surface("Office Folder", Vector3(0.78, 0.08, 0.52), Vector3(34.2, 1.125, 28.8), Color(0.70, 0.56, 0.22), 0.5)
+	pickup_on_table("Office Stamp", Vector3(0.42, 0.30, 0.42), 38.4, 28.4, 1.10, RED, 0.8)
+	pickup_on_table("Office Folder", Vector3(0.78, 0.08, 0.52), 34.2, 28.8, 1.10, Color(0.70, 0.56, 0.22), 0.5)
 
-	pickup_on_surface("Pool Float Board", Vector3(1.3, 0.12, 0.55), Vector3(-12.0, 0.63, -25.7), Color(0.82, 0.72, 0.24), 0.7)
-	pickup_on_surface("Pool Towel", Vector3(1.1, 0.10, 0.55), Vector3(-13.2, 0.63, -22.9), Color(0.68, 0.24, 0.28), 0.5)
+	pickup_on_table("Pool Float Board", Vector3(1.3, 0.12, 0.55), -12.0, -25.7, 0.62, Color(0.82, 0.72, 0.24), 0.7)
+	pickup_on_table("Pool Towel", Vector3(1.1, 0.10, 0.55), -13.2, -22.9, 0.62, Color(0.68, 0.24, 0.28), 0.5)
 
 func pickup_floor(n: String, size: Vector3, x: float, z: float, col: Color, mass_value: float) -> void:
 	pickup_box(n, size, Vector3(x, size.y * 0.5 + 0.03, z), col, mass_value)
 
 func pickup_on_table(n: String, size: Vector3, x: float, z: float, table_y: float, col: Color, mass_value: float) -> void:
 	pickup_box(n, size, Vector3(x, table_y + size.y * 0.5 + 0.025, z), col, mass_value)
-
-func pickup_on_surface(n: String, size: Vector3, surface_pos: Vector3, col: Color, mass_value: float) -> void:
-	pickup_box(n, size, Vector3(surface_pos.x, surface_pos.y + size.y * 0.5 + 0.02, surface_pos.z), col, mass_value)
 
 func pickup_box(n: String, size: Vector3, pos: Vector3, col: Color, mass_value: float) -> RigidBody3D:
 	var body: RigidBody3D = RigidBody3D.new()
