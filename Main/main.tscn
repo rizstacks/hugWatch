@@ -46,4 +46,3 @@ shadow_enabled = true
 environment = SubResource("Environment_school")
 
 [node name="Map" parent="." unique_id=899873080 instance=ExtResource("3_map")]
-clear_old_scene_siblings = true

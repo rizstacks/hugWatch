@@ -1,17 +1,11 @@
 DEV TODO LIST
 LEON
--get the map script to work AKA get
-the functions riz deleted back and better!
-
-OPTIONAL TODO
--Go into the main and spawn the map 
-from the ready function
+-Adding arms and animation
 
 RIZ
--fix the NPC AI
-	-make them stick to each other
-		-start adding it to global timer?
-	-maybe a throwing mechanic?
-		-makes the people disappear
-			-potentially go hard on the 
-			points and make the game fun!!
+-Make the NPC's confined to the room
+
+GENERAL TODO
+-points Riz
+-timer for player Ben/Riz
+-main menu Ben
