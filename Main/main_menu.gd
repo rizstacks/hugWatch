@@ -1,21 +1,23 @@
 extends Control
 
-@onready var play_button = $MarginContainer/VBoxContainer/PlayButton
-@onready var options_button = $MarginContainer/VBoxContainer/OptionsButton
-@onready var quit_button = $MarginContainer/VBoxContainer/QuitButton
+# Path to your main game scene — update this to match your actual scene path
+const GAME_SCENE = "res://Main/main.tscn"
 
-func _ready():
-	play_button.pressed.connect(_on_play_pressed)
-	options_button.pressed.connect(_on_options_pressed)
+@onready var start_button: Button = $VBoxContainer/StartButton
+@onready var quit_button: Button = $VBoxContainer/QuitButton
+
+
+func _ready() -> void:
+	start_button.pressed.connect(_on_start_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 	
-	play_button.grab_focus()
+	# Grab focus so keyboard/controller works immediately
+	start_button.grab_focus()
 
-func _on_play_pressed():
-	get_tree().change_scene_to_file("res://Main/main.tscn")
 
-func _on_options_pressed():
-	print("Options menu opening...")
+func _on_start_pressed() -> void:
+	get_tree().change_scene_to_file(res://Main/main.tscn)
 
-func _on_quit_pressed():
+
+func _on_quit_pressed() -> void:
 	get_tree().quit()
