@@ -1,11 +1,9 @@
 [gd_scene format=3 uid="uid://bk2rxxg745mu7"]
 
-[ext_resource type="Script" uid="uid://cxdddhv43u3w8" path="res://Main/main.gd" id="1_qvhan"]
 [ext_resource type="Script" uid="uid://dwlgxpngpwij8" path="res://Main/player.gd" id="2_eunhr"]
-[ext_resource type="PackedScene" uid="uid://1luuq8skq06h" path="res://Spawnables/male_casual 2/male_casual.fbx" id="3_k3v36"]
 [ext_resource type="PackedScene" uid="uid://ciricousd1hsa" path="res://Main/map.tscn" id="3_qvhan"]
 [ext_resource type="Script" uid="uid://bpsccpcgsbvl5" path="res://Main/map.gd" id="4_eunhr"]
-[ext_resource type="Script" uid="uid://cie2l8wc6l6i0" path="res://Spawnables/npc.gd" id="4_liyct"]
+[ext_resource type="PackedScene" uid="uid://bqpw7errymtu8" path="res://psx-first-person-arms-free-game-assets (1)/arms_rig.glb" id="4_k3v36"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4flbx"]
 
@@ -19,13 +17,17 @@ background_mode = 2
 sky = SubResource("Sky_onrkg")
 
 [node name="Main" type="Node3D" unique_id=1322912856]
-script = ExtResource("1_qvhan")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.4469897, 0)
 
 [node name="Player" type="CharacterBody3D" parent="." unique_id=4466265]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 script = ExtResource("2_eunhr")
 
+[node name="arms_rig" parent="Player" unique_id=1270015559 instance=ExtResource("4_k3v36")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.8628231, 0)
+
 [node name="Camera3D" type="Camera3D" parent="Player" unique_id=29262232]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75652057, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1132795497]
 shape = SubResource("CapsuleShape3D_4flbx")
@@ -40,13 +42,3 @@ environment = SubResource("Environment_4flbx")
 [node name="Map" parent="." unique_id=899873080 instance=ExtResource("3_qvhan")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12408737, 0.5, 0.8519172)
 script = ExtResource("4_eunhr")
-
-[node name="npc" type="CharacterBody3D" parent="." unique_id=128957801]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="npc" unique_id=283955142]
-script = ExtResource("4_liyct")
-
-[node name="male_casual" parent="npc" unique_id=1373277864 instance=ExtResource("3_k3v36")]
-transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
-
-[node name="walkTimer" type="Timer" parent="npc" unique_id=1697910722]
