@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://bk2rxxg745mu7"]
 
 [ext_resource type="Script" uid="uid://dwlgxpngpwij8" path="res://Main/player.gd" id="2_eunhr"]
+[ext_resource type="Script" uid="uid://do88qk00h0d2j" path="res://Main/arm.gd" id="2_k3v36"]
 [ext_resource type="PackedScene" uid="uid://ciricousd1hsa" path="res://Main/map.tscn" id="3_qvhan"]
 [ext_resource type="Script" uid="uid://bpsccpcgsbvl5" path="res://Main/map.gd" id="4_eunhr"]
-[ext_resource type="PackedScene" uid="uid://bqpw7errymtu8" path="res://psx-first-person-arms-free-game-assets (1)/arms_rig.glb" id="4_k3v36"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4flbx"]
 
@@ -17,23 +17,24 @@ background_mode = 2
 sky = SubResource("Sky_onrkg")
 
 [node name="Main" type="Node3D" unique_id=1322912856]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.4469897, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7983832, 0)
 
 [node name="Player" type="CharacterBody3D" parent="." unique_id=4466265]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(0.99993163, -0.011683602, 0.0004509274, 0.011686947, 0.9998971, -0.0083105, -0.00035375947, 0.008315203, 0.99996537, 0, 1, 0)
 script = ExtResource("2_eunhr")
 
-[node name="arms_rig" parent="Player" unique_id=1270015559 instance=ExtResource("4_k3v36")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.8628231, 0)
-
-[node name="Camera3D" type="Camera3D" parent="Player" unique_id=29262232]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75652057, 0)
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1132795497]
+transform = Transform3D(1.0000001, 1.1898464e-09, 8.731149e-11, 2.3289886e-09, 1.0000002, 0, 5.820766e-11, -1.8626451e-09, 1.0000002, -0.03971158, 0.4055021, 0.029338079)
 shape = SubResource("CapsuleShape3D_4flbx")
 
+[node name="Camera3D" type="Camera3D" parent="Player" unique_id=149576060]
+transform = Transform3D(0.99984103, -0.0001463751, -0.017834524, 0.00015009433, 1.0000001, 0.00020712987, 0.017834472, -0.00020977668, 0.999841, 0.0017874998, 1.2433771, 0.0092273895)
+
+[node name="armsroot" type="Node3D" parent="Player/Camera3D" unique_id=2114226293]
+script = ExtResource("2_k3v36")
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1159651446]
-transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 0, 0)
+transform = Transform3D(0.9999964, -0.001956635, -0.001822914, 0.0026727186, 0.70844734, 0.7057587, -8.949127e-05, -0.7057611, 0.7084501, -0.0020756721, 0.12763226, -0.002918005)
 shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1357525666]
