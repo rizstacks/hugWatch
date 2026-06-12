@@ -1,6 +1,6 @@
 # HugWatch
 
-A first-person Godot 4 game.
+A first-person Godot game.
 
 ---
 
